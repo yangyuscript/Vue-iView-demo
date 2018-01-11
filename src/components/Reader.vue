@@ -7,9 +7,10 @@
         <Submenu name="1">
           <template slot="title">
             <Icon type="ios-navigate"></Icon>
-            后台管理
+            欢迎你，{{msg}}同学
           </template>
-          <MenuItem name="1-1"><span @click="lookUser">用户管理</span></MenuItem>
+          <MenuItem name="1-1"><span @click="searchBook">搜索书籍</span></MenuItem>
+          <MenuItem name="1-2"><span @click="lookRecord">借阅记录</span></MenuItem>
         </Submenu>
         <!--<Submenu name="2">
           <template slot="title">
@@ -40,7 +41,8 @@
       </div>
       <div class="layout-content">
         <div class="layout-content-main">
-          <template id="userManage"></template>
+          <template id="searchBook"></template>
+          <template id="myRecord"></template>
           <component :is="currentView"></component>
         </div>
       </div>
@@ -52,31 +54,41 @@
   </div>
 </template>
 <script>
-  import userManage from '../components/UserManage.vue'
+  import searchBook from '../components/SearchBook.vue'
+  import myRecord from '../components/MyRecord.vue'
   import Button from 'iview/src/components/button/button'
   export default {
-    name: 'Index',
+    name: 'SearchBook',
     data () {
       return {
-        msg: 'haha',
+        msg: '',
         one_nav: '主页',
-        two_nav: '后台管理',
-        three_nav: '用户管理',
-        currentView: 'userManage'
+        two_nav: '>',
+        three_nav: '搜索书籍',
+        currentView: 'searchBook'
       }
     },
+    mounted () {
+      this.msg = window.localStorage.getItem('username')
+    },
     methods: {
-      lookUser () {
-        this.currentView = 'userManage'
+      searchBook () {
         this.one_nav = '主页'
-        this.two_nav = '后台管理'
-        this.three_nav = '用户管理'
-        this.currentView = 'userManage'
+        this.two_nav = '>'
+        this.three_nav = '搜索书籍'
+        this.currentView = 'searchBook'
+      },
+      lookRecord () {
+        this.one_nav = '主页'
+        this.two_nav = '>'
+        this.three_nav = '借阅记录'
+        this.currentView = 'myRecord'
       }
     },
     components: {
       Button,
-      userManage: userManage
+      searchBook: searchBook,
+      myRecord: myRecord
     }
   }
 </script>

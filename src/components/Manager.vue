@@ -7,26 +7,11 @@
         <Submenu name="1">
           <template slot="title">
             <Icon type="ios-navigate"></Icon>
-            后台管理
+            欢迎你，图书管理员:{{msg}}
           </template>
-          <MenuItem name="1-1"><span @click="lookUser">用户管理</span></MenuItem>
+          <MenuItem name="1-1"><span @click="lookBook">图书管理</span></MenuItem>
+          <MenuItem name="1-2"><span @click="lookRecord">借阅记录</span></MenuItem>
         </Submenu>
-        <!--<Submenu name="2">
-          <template slot="title">
-            <Icon type="ios-keypad"></Icon>
-            书籍管理
-          </template>
-          <MenuItem name="2-1"><span @click="lookBook">查看书籍</span></MenuItem>
-          <MenuItem name="2-2">Option 2</MenuItem>
-        </Submenu>
-        <Submenu name="3">
-          <template slot="title">
-            <Icon type="ios-analytics"></Icon>
-            网站管理
-          </template>
-          <MenuItem name="3-1">Option 1</MenuItem>
-          <MenuItem name="3-2">Option 2</MenuItem>
-        </Submenu>-->
       </Menu>
       </Col>
       <Col span="19">
@@ -40,7 +25,8 @@
       </div>
       <div class="layout-content">
         <div class="layout-content-main">
-          <template id="userManage"></template>
+          <template id="bookManage"></template>
+          <template id="recordManage"></template>
           <component :is="currentView"></component>
         </div>
       </div>
@@ -52,7 +38,8 @@
   </div>
 </template>
 <script>
-  import userManage from '../components/UserManage.vue'
+  import bookManage from '../components/BookManage.vue'
+  import recordManage from '../components/RecordManage.vue'
   import Button from 'iview/src/components/button/button'
   export default {
     name: 'Index',
@@ -61,22 +48,32 @@
         msg: 'haha',
         one_nav: '主页',
         two_nav: '后台管理',
-        three_nav: '用户管理',
-        currentView: 'userManage'
+        three_nav: '图书管理',
+        currentView: 'bookManage'
       }
     },
+    mounted () {
+      this.msg = window.localStorage.getItem('username')
+    },
     methods: {
-      lookUser () {
-        this.currentView = 'userManage'
+      lookBook () {
+        this.currentView = 'bookManage'
         this.one_nav = '主页'
         this.two_nav = '后台管理'
-        this.three_nav = '用户管理'
-        this.currentView = 'userManage'
+        this.three_nav = '图书管理'
+        this.currentView = 'bookManage'
+      },
+      lookRecord () {
+        this.one_nav = '主页'
+        this.two_nav = '后台管理'
+        this.three_nav = '借阅记录'
+        this.currentView = 'recordManage'
       }
     },
     components: {
       Button,
-      userManage: userManage
+      bookManage: bookManage,
+      recordManage: recordManage
     }
   }
 </script>

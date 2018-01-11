@@ -52,7 +52,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: '流书后台管理系统',
+      msg: '图书馆',
       formItem: {
         account: '',
         password: '',
@@ -84,17 +84,35 @@ export default {
       this.loading = true
       this.$refs[name].validate((valid) => {
         if (valid) {
-          that.$http.post(that.GLOBAL.serverPath + '/user/login',
+          that.$http.post(that.GLOBAL.serverPath + '/excise/login',
             {
-              email: that.formItem.account,
+              account: that.formItem.account,
               password: that.formItem.password
             },
             {
               emulateJSON: true
             }
           ).then(function (res) {
-            console.log(res.data.status)
-            this.$Message.success('提交成功!' + that.formItem.account)
+            console.log(res.data.loginUser)
+            if (res.data.result === 'yes') {
+              this.$Message.success('登录成功!')
+              window.localStorage.setItem('userId', res.data.loginUser.rid)
+              window.localStorage.setItem('account', res.data.loginUser.account)
+              window.localStorage.setItem('username', res.data.loginUser.name)
+              window.localStorage.setItem('sex', res.data.loginUser.sex)
+              window.localStorage.setItem('condi', res.data.loginUser.condi)
+              console.log('hahaha' + res.data.condi)
+              if (res.data.condi === 2) {
+                this.$router.replace({path: '/index'})
+              } else if (res.data.condi === 1) {
+                this.$router.replace({path: '/manager'})
+              } else {
+                this.$router.replace({path: '/reader'})
+              }
+            } else {
+              this.$Message.error('账号或密码有误！')
+              this.loading = false
+            }
           })
         } else {
           this.loading = false

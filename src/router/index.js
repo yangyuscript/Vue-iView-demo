@@ -5,6 +5,8 @@ import iView from 'iview'
 import 'iView/dist/styles/iview.css'
 import HelloWorld from '@/components/HelloWorld'
 import Index from '@/components/Index'
+import Reader from '@/components/Reader'
+import Manager from '@/components/Manager'
 
 Vue.use(Router)
 Vue.use(VueResource)
@@ -20,6 +22,14 @@ export default new Router({
     {
       path: '/index',
       component: Index
+    },
+    {
+      path: '/reader',
+      component: Reader
+    },
+    {
+      path: '/manager',
+      component: Manager
     }
   ]
 })

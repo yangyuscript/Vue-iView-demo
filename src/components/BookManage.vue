@@ -1,69 +1,150 @@
 <template>
   <div class="container">
     <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
-      <FormItem prop="user">
-        <Input type="text" v-model="formInline.book" placeholder="书名">
+      <FormItem prop="account">
+        <Input type="text" v-model="formInline.title" placeholder="书名">
         <Icon type="ios-person-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
-      <FormItem prop="releaser">
-        <Input type="text" v-model="formInline.releaser" placeholder="发布者">
-        <Icon type="ios-locked-outline" slot="prepend"></Icon>
-        </Input>
+      <FormItem>
+        <Button type="primary" @click="handleSubmit('formInline')">查找</Button>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('formInline')">Signin</Button>
+        <Button type="primary" @click="modal1 = true">新添书籍</Button>
       </FormItem>
     </Form>
     <Table border :columns="columns7" :data="data6"></Table>
-    <Page :total="100"></Page>
+    <Page :total="total" :page-size="10" @on-change="changePage"></Page>
+
+    <Modal
+      v-model="modal1"
+      title="新添书籍"
+      @on-ok="ok('formItem2')"
+    >
+      <Form ref="formItem2" :model="formItem2" :rules="ruleItem2" :label-width="80">
+        <FormItem label="书名" prop="title">
+          <Input v-model="formItem2.title" placeholder=""></Input>
+        </FormItem>
+        <FormItem label="作者" prop="author">
+          <Input v-model="formItem2.author" placeholder=""></Input>
+        </FormItem>
+        <FormItem label="出版社" prop="publisher">
+          <Input v-model="formItem2.publisher" placeholder=""></Input>
+        </FormItem>
+        <FormItem label="出版时间" prop="publishtime">
+          <DatePicker v-model="formItem2.publishtime" prop="publishtime" type="date" placeholder="选择出版日期" style="width: 200px"></DatePicker>
+        </FormItem>
+        <FormItem label="描述" prop="descri">
+          <Input v-model="formItem2.descri" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="书籍描述..."></Input>
+        </FormItem>
+      </Form>
+    </Modal>
+
+    <!--添加书籍副本-->
+    <Modal
+      v-model="modal2"
+      title="新添书籍副本"
+      @on-ok="ok2('formItem3')"
+    >
+      <Form ref="formItem3" :model="formItem3" :rules="ruleItem3" :label-width="80">
+        <FormItem label="编号" prop="num">
+          <Input v-model="formItem3.num" placeholder=""></Input>
+        </FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 <script type="es6">
   export default {
-    name: 'BookManage',
+    name: 'UserManage',
     data () {
       return {
+        total: '',
+        condi: '',
+        modal1: false,
+        modal2: false,
+        currIndex: 0,//最近被点击添加编号副本的图书编号
         formInline: {
-          book: '',
-          releaser: ''
+          title: ''
         },
-        ruleInline: {
-          user: [
-            { required: true, message: 'Please fill in the user name', trigger: 'blur' }
-          ],
-          releaser: [
-            { required: true, message: 'Please fill in the password.', trigger: 'blur' },
-            { type: 'string', min: 6, message: 'The password length cannot be less than 6 bits', trigger: 'blur' }
-          ]
+        formItem2: {
+          title: '',
+          author: '',
+          publisher: '',
+          publishtime: '',
+          descri: ''
+        },
+        ruleItem2: {
+          title: [{
+            required: true,
+            message: '请填写书名！',
+            trigger: 'blur'
+          }],
+          author: [{
+            required: true,
+            message: '请填书籍作者',
+            trigger: 'blur'
+          }],
+          publisher: [{
+            required: true,
+            message: '请填出版社',
+            trigger: 'blur'
+          }],
+          publishtime: [{
+            required: true,
+            message: '请填写出版时间'
+          }],
+          descri: [{
+            required: true,
+            message: '请填书籍描述',
+            trigger: 'blur'
+          }]
+        },
+        formItem3: {
+          num: ''
+        },
+        ruleItem3: {
+          num: [{
+            required: true,
+            message: '请填写书籍副本编号！',
+            trigger: 'blur'
+          }]
         },
         columns7: [
           {
-            title: 'Name',
-            key: 'name',
+            title: '编号',
+            key: 'aid',
             render: (h, params) => {
               return h('div', [
                 h('Icon', {
                   props: {
-                    type: 'person'
+                    type: 'document-text'
                   }
                 }),
-                h('strong', params.row.name)
+                h('strong', params.row.aid)
               ]);
             }
           },
           {
-            title: 'Age',
-            key: 'age'
+            title: '书名',
+            key: 'title'
           },
           {
-            title: 'Address',
-            key: 'address'
+            title: '作者',
+            key: 'author'
           },
           {
-            title: 'Action',
+            title: '出版社',
+            key: 'publisher'
+          },
+          {
+            title: '出版时间',
+            key: 'publishtime'
+          },
+          {
+            title: '操作',
             key: 'action',
-            width: 150,
+            width: 300,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -80,7 +161,22 @@
                       this.show(params.index)
                     }
                   }
-                }, 'View'),
+                }, '查看'),
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.modal2=true
+                      this.currIndex = this.data6[params.index].aid
+                    }
+                  }
+                }, '添加编号副本'),
                 h('Button', {
                   props: {
                     type: 'error',
@@ -91,54 +187,112 @@
                       this.remove(params.index)
                     }
                   }
-                }, 'Delete')
+                }, '删除')
               ]);
             }
           }
         ],
-        data6: [
-          {
-            name: 'John Brown',
-            age: 18,
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            name: 'Jim Green',
-            age: 24,
-            address: 'London No. 1 Lake Park'
-          },
-          {
-            name: 'Joe Black',
-            age: 30,
-            address: 'Sydney No. 1 Lake Park'
-          },
-          {
-            name: 'Jon Snow',
-            age: 26,
-            address: 'Ottawa No. 2 Lake Park'
-          }
-        ]
+        data6: []
       }
     },
+    mounted(){
+      this.request(1);
+    },
     methods: {
-      handleSubmit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.$Message.success('Success!');
-          } else {
-            this.$Message.error('Fail!');
-          }
-        })
+      handleSubmit(account) {
+        this.request(1)
       },
       show (index) {
         this.$Modal.info({
-          title: 'User Info',
-          content: `Name：${this.data6[index].name}<br>Age：${this.data6[index].age}<br>Address：${this.data6[index].address}`
+          title: '书籍信息',
+          content: `书名：${this.data6[index].title}<br>作者：${this.data6[index].author}<br>出版社：${this.data6[index].publisher}<br>出版时间：${this.data6[index].publishtime}<br>副本数量：${this.data6[index].num}<br>介绍：${this.data6[index].descri}`
         })
       },
       remove (index) {
         this.data6.splice(index, 1);
+      },
+      request (currentPage){
+        var that=this
+        this.$http.post(that.GLOBAL.serverPath + '/excise/getAllAlbums',
+          {
+            title: that.formInline.title,
+            currentPage: currentPage
+          },
+          {
+            emulateJSON: true
+          }
+        ).then(function (res) {
+          console.log(res.data.pageInfo)
+          that.total=res.data.pageInfo.pages
+          that.data6=res.data.albums
+        })
+      },
+      changePage: function(page){
+        this.request(page)
+      },
+      ok (name) {
+        var that=this
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            that.$http.post(that.GLOBAL.serverPath + '/excise/addAlbum',
+              {
+                title: that.formItem2.title,
+                author: that.formItem2.author,
+                publisher: that.formItem2.publisher,
+                publishtime: that.formItem2.publishtime+'',
+                descri: that.formItem2.descri
+              },
+              {
+                emulateJSON: true
+              }
+            ).then(function (res) {
+              console.log(res.data.status)
+              if(res.data.status=='ok'){
+                that.$Message.success('新增成功')
+                that.formInline.account=''
+                that.formItem2.title=''
+                that.formItem2.author=''
+                that.formItem2.publisher=''
+                that.formItem2.publishtime=''
+                that.formItem2.descri=''
+                that.request(1)
+              }
+
+            }).catch((e) => {
+              that.$Message.fail('网络有误！')
+            })
+          }
+        })
+      },
+      ok2 (name) {
+        var that=this
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            that.$http.post(that.GLOBAL.serverPath + '/excise/addSubAlbum',
+              {
+                aid: that.currIndex,
+                number: that.formItem3.num
+              },
+              {
+                emulateJSON: true
+              }
+            ).then(function (res) {
+              console.log(res.data.status)
+              if(res.data.status=='ok'){
+                that.$Message.success('新增成功')
+                that.formItem3.num=''
+                that.request(1)
+              }else{
+                that.$Message.error('新增失败！查看是否存在相同编号')
+              }
+
+            }).catch((e) => {
+              that.$Message.fail('网络有误！')
+            })
+          }
+        })
       }
     }
   }
 </script>
+
