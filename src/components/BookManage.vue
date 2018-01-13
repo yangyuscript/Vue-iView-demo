@@ -19,6 +19,9 @@
     <Modal
       v-model="modal1"
       title="新添书籍"
+      width="800"
+      scrollable="true"
+      ok-text="添加"
       @on-ok="ok('formItem2')"
     >
       <Form ref="formItem2" :model="formItem2" :rules="ruleItem2" :label-width="80">
@@ -35,7 +38,11 @@
           <DatePicker v-model="formItem2.publishtime" prop="publishtime" type="date" placeholder="选择出版日期" style="width: 200px"></DatePicker>
         </FormItem>
         <FormItem label="描述" prop="descri">
-          <Input v-model="formItem2.descri" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="书籍描述..."></Input>
+          <!--<Input v-model="formItem2.descri" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="书籍描述..."></Input>-->
+          <quill-editor v-model="formItem2.descri" ref="VueQuillEditor"
+                        :content="content"
+                        @change="onEditorChange($event)">
+          </quill-editor>
         </FormItem>
       </Form>
     </Modal>
@@ -44,6 +51,7 @@
     <Modal
       v-model="modal2"
       title="新添书籍副本"
+      ok-text="添加副本"
       @on-ok="ok2('formItem3')"
     >
       <Form ref="formItem3" :model="formItem3" :rules="ruleItem3" :label-width="80">
@@ -59,10 +67,11 @@
     name: 'UserManage',
     data () {
       return {
-        total: '',
+        total: 0,
         condi: '',
         modal1: false,
         modal2: false,
+        content:'',
         currIndex: 0,//最近被点击添加编号副本的图书编号
         formInline: {
           title: ''
@@ -192,7 +201,8 @@
             }
           }
         ],
-        data6: []
+        data6: [],
+        data7: []
       }
     },
     mounted(){
@@ -205,7 +215,9 @@
       show (index) {
         this.$Modal.info({
           title: '书籍信息',
-          content: `书名：${this.data6[index].title}<br>作者：${this.data6[index].author}<br>出版社：${this.data6[index].publisher}<br>出版时间：${this.data6[index].publishtime}<br>副本数量：${this.data6[index].num}<br>介绍：${this.data6[index].descri}`
+          width: '1100',
+          //content: `书名：${this.data6[index].title}<br>作者：${this.data6[index].author}<br>出版社：${this.data6[index].publisher}<br>出版时间：${this.data6[index].publishtime}<br>副本数量：${this.data6[index].num}<br>介绍：${this.data6[index].descri}`
+          content: `书名：${this.data6[index].title}<br>作者：${this.data6[index].author}<br>出版社：${this.data6[index].publisher}<br>出版时间：${this.data6[index].publishtime}<br>副本数量：${this.data6[index].num}<br>可借数量：${this.data6[index].count}<br>可借副本编号：<span style="color:red;">${this.data6[index].suba}</span><br>介绍：${this.data6[index].descri}`
         })
       },
       remove (index) {
@@ -223,8 +235,30 @@
           }
         ).then(function (res) {
           console.log(res.data.pageInfo)
-          that.total=res.data.pageInfo.pages
-          that.data6=res.data.albums
+          that.total=res.data.pageInfo.total
+          that.data6=[]
+          that.data7=res.data.albums
+          that.data7.forEach((e) => {
+            let obj={}
+            obj.aid = e.aid
+            obj.title = e.title
+            obj.author = e.author
+            obj.publisher = e.publisher
+            obj.publishtime = e.publishtime
+            obj.num = e.num
+            obj.descri = e.descri
+            var count=0
+            var s=''
+            e.subalbums.forEach((item)=>{
+              if( item.condi==0 ){
+                count++
+                s=s+item.number+','
+              }
+            })
+            obj.count = count
+            obj.suba = s
+            that.data6.push(obj)
+          })
         })
       },
       changePage: function(page){
@@ -248,7 +282,13 @@
             ).then(function (res) {
               console.log(res.data.status)
               if(res.data.status=='ok'){
-                that.$Message.success('新增成功')
+                //that.$Message.success('新增成功')
+                that.$Notice.config({
+                  top: 50,
+                  duration: 3,
+                  title: '通知',
+                  desc: '新添书籍成功!'
+                })
                 that.formInline.account=''
                 that.formItem2.title=''
                 that.formItem2.author=''
@@ -291,6 +331,11 @@
             })
           }
         })
+      },
+      onEditorChange({editor,html,text}){
+        // 富文本编辑器，文本改变时，设置字段值
+        console.log(editor,html,text)
+        this.content = html
       }
     }
   }

@@ -53,6 +53,10 @@
             key: 'time'
           },
           {
+            title: '应归还时间',
+            key: 'backtime'
+          },
+          {
             title: '是否超期',
             key: 'condi'
           }
@@ -77,8 +81,8 @@
           }
         ).then(function (res) {
           console.log(res.data.borrowrecords)
-          that.total=res.data.pageInfo.pages
-          //that.data6=res.data.borrowrecords
+          that.total=res.data.pageInfo.total
+          that.data6=[]
           that.data7=res.data.borrowrecords
           that.data7.forEach((e) =>{
             let obj = {}
@@ -88,6 +92,7 @@
             obj.raccount = e.raccount
             obj.rname = e.reader.name
             obj.time = e.time
+            obj.backtime = e.backtime
             var time = new Date().getTime();
             console.log(time)
             if(time < e.inttime){

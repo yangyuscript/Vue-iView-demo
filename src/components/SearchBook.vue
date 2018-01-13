@@ -129,14 +129,15 @@
                 h('Button', {
                   props: {
                     type: 'error',
-                    size: 'small'
+                    size: 'small',
+                    disabled: this.data6[params.index].unBorrowed
                   },
                   on: {
                     click: () => {
-                      this.remove(params.index)
+                      this.borrow(params.index)
                     }
                   }
-                }, '借阅')
+                },'借阅')
               ]);
             }
           }
@@ -155,11 +156,33 @@
       show (index) {
         this.$Modal.info({
           title: '书籍信息',
+          width: '1100',
           content: `书名：${this.data6[index].title}<br>作者：${this.data6[index].author}<br>出版社：${this.data6[index].publisher}<br>出版时间：${this.data6[index].publishtime}<br>副本数量：${this.data6[index].num}<br>可借数量：${this.data6[index].count}<br>可借副本编号：<span style="color:red;">${this.data6[index].suba}</span><br>介绍：${this.data6[index].descri}`
         })
       },
-      remove (index) {
-        this.data6.splice(index, 1);
+      borrow (index) {
+        //this.data6.splice(index, 1);
+        var that=this
+        this.$http.post(that.GLOBAL.serverPath + '/excise/borrow',
+          {
+            aid: that.data6[index].aid,
+            rid: window.localStorage.getItem('userId'),
+            raccount: window.localStorage.getItem('account')
+          },
+          {
+            emulateJSON: true
+          }
+        ).then(function (res) {
+          if(res.data.status == 'ok'){
+            this.$Message.success('借阅成功,注意归还日期！')
+            that.data6[index].count=that.data6[index].count-1
+            if(that.data6[index].count == 0){
+              this.data6[index].unBorrowed = true
+            }
+          }else{
+            this.$Message.error('借阅失败，请重试!')
+          }
+        })
       },
       request (currentPage){
         var that=this
@@ -173,8 +196,8 @@
           }
         ).then(function (res) {
           console.log(res.data.pageInfo)
-          that.total=res.data.pageInfo.pages
-          //that.data6=res.data.albums
+          that.total=res.data.pageInfo.total
+          that.data6=[]
           that.data7=res.data.albums
           that.data7.forEach((e) => {
             let obj={}
@@ -193,6 +216,11 @@
                 s=s+item.number+','
               }
             })
+            if(count == 0){
+              obj.unBorrowed = true
+            }else{
+              obj.unBorrowed = false
+            }
             obj.count = count
             obj.suba = s
             that.data6.push(obj)

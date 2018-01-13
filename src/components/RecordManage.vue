@@ -63,6 +63,10 @@
             key: 'time'
           },
           {
+            title: '应归还时间',
+            key: 'backtime'
+          },
+          {
             title: '是否超期',
             key: 'condi'
           },
@@ -94,10 +98,10 @@
                   },
                   on: {
                     click: () => {
-                      this.remove(params.index)
+                      this.reback(params.index)
                     }
                   }
-                }, '删除')
+                }, '确认归还')
               ]);
             }
           }
@@ -116,11 +120,28 @@
       show (index) {
         this.$Modal.info({
           title: '书籍信息',
-          content: `书名：${this.data6[index].title}<br>书籍编号：${this.data6[index].number}<br>借阅者学号：${this.data6[index].raccount}<br>借阅者姓名：${this.data6[index].rname}<br>借阅时间：${this.data6[index].time}<br>状态：${this.data6[index].condi}`
+          content: `书名：${this.data6[index].title}<br>书籍编号：${this.data6[index].number}<br>借阅者学号：${this.data6[index].raccount}<br>借阅者姓名：${this.data6[index].rname}<br>借阅时间：${this.data6[index].time}<br>应归还时间：${this.data6[index].backtime}<br>状态：${this.data6[index].condi}`
         })
       },
-      remove (index) {
-        this.data6.splice(index, 1);
+      reback (index) {
+        //this.data6.splice(index, 1);
+        var that=this
+        this.$http.post(that.GLOBAL.serverPath + '/excise/reback',
+          {
+            bid: that.data6[index].bid,
+            sid: that.data6[index].sid
+          },
+          {
+            emulateJSON: true
+          }
+        ).then(function (res) {
+          if(res.data.status == 'yes'){
+            that.data6.splice(index,1)
+            this.$Message.success('操作成功')
+          }else{
+            this.$Message.status('操作失败')
+          }
+        })
       },
       request (currentPage){
         var that=this
@@ -134,8 +155,8 @@
           }
         ).then(function (res) {
           console.log(res.data.borrowrecords)
-          that.total=res.data.pageInfo.pages
-          //that.data6=res.data.borrowrecords
+          that.total=res.data.pageInfo.total
+          that.data6=[]
           that.data7=res.data.borrowrecords
           that.data7.forEach((e) =>{
             let obj = {}
@@ -145,6 +166,8 @@
             obj.raccount = e.raccount
             obj.rname = e.reader.name
             obj.time = e.time
+            obj.backtime = e.backtime
+            obj.sid = e.sid
             var time = new Date().getTime();
             console.log(time)
             if(time < e.inttime){

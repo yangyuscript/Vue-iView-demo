@@ -176,7 +176,7 @@
           }
         ).then(function (res) {
           console.log(res.data.pageInfo)
-          that.total=res.data.pageInfo.pages
+          that.total=res.data.pageInfo.total
           that.data6=res.data.readers
         }).catch((e) => {
           this.$Message.fail('网络有误！')
@@ -206,7 +206,7 @@
                 that.formInline.account=''
                 that.request(1)
               }else{
-                that.$Message.fail('已存在该学号的用户')
+                that.$Message.error('已存在该学号的用户')
               }
 
             }).catch((e) => {

@@ -7,6 +7,7 @@ import Global from './components/util/Global'
 
 Vue.prototype.GLOBAL = Global
 Vue.config.productionTip = false
+
 // 设置请求头部content-type:application/x-www-form-urlencoded
 // Vue.http.options.emulateJSON = true
 // Vue.http.options.emulateHTTP = true
