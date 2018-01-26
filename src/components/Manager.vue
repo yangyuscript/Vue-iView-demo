@@ -59,7 +59,6 @@
     },
     methods: {
       lookBook () {
-        this.currentView = 'bookManage'
         this.one_nav = '主页'
         this.two_nav = '后台管理'
         this.three_nav = '图书管理'
