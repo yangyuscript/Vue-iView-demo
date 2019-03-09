@@ -16,4 +16,7 @@
 ## 效果展示
 
 
+##tip
+鉴于star该项目的同学越来越多，鄙人觉得应当补充以上信息供大家交流学习，如果大家有任何建议均可issue，一定尽一切办法解决各位的问题，希望大家一起进步，oh yeah!
+
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
