@@ -4,14 +4,14 @@
       <Col span="5" class="layout-menu-left">
       <Menu active-name="1-1" theme="dark" width="auto" :open-names="['1']">
         <div class="layout-logo-left">
-          <h2 style="color:white;">南京邮电大学图书馆</h2>
+          <h2 style="color:white;">图书馆</h2>
         </div>
         <Submenu name="1">
           <template slot="title">
             <Icon type="ios-navigate"></Icon>
             后台管理
           </template>
-          <MenuItem name="1-1"><span @click="lookUser">用户管理</span></MenuItem>
+          <MenuItem name="1-1" @click.native="lookUser"><span>用户管理</span></MenuItem>
         </Submenu>
         <!--<Submenu name="2">
           <template slot="title">

@@ -4,15 +4,15 @@
       <Col span="5" class="layout-menu-left">
       <Menu active-name="1-1" theme="dark" width="auto" :open-names="['1']">
         <div class="layout-logo-left">
-          <h2 style="color:white;">南京邮电大学图书馆</h2>
+          <h2 style="color:white;">图书馆</h2>
         </div>
         <Submenu name="1">
           <template slot="title">
             <Icon type="ios-navigate"></Icon>
             欢迎你，图书管理员:{{msg}}
           </template>
-          <MenuItem name="1-1"><div @click="lookBook">图书管理</div></MenuItem>
-          <MenuItem name="1-2"><div @click="lookRecord">借阅记录</div></MenuItem>
+          <MenuItem name="1-1" @click.native="lookBook"><span>图书管理</span></MenuItem>
+          <MenuItem name="1-2" @click.native="lookRecord"><span>借阅记录</span></MenuItem>
         </Submenu>
       </Menu>
       </Col>
