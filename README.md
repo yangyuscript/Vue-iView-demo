@@ -14,7 +14,15 @@
 - 3.前台启动：导入项目，进入控制台，到项目所在路径，执行命令：npm run dev，访问地址：http://localhost:8075  进入到登录界面，打开数据库中t_reader表获取用户名和密码
 
 ## 效果展示
-
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/1.png)
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/2.png)
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/3.png)
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/4.png)
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/5.png)
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/6.png)
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/7.png)
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/8.png)
+![maze](https://github.com/yangyuscript/Vue-iView-demo/tree/master/static/9.png)
 
 ##tip
 鉴于star该项目的同学越来越多，鄙人觉得应当补充以上信息供大家交流学习，如果大家有任何建议均可issue，一定尽一切办法解决各位的问题，希望大家一起进步，oh yeah!
